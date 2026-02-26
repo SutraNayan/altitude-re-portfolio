@@ -124,14 +124,14 @@ window.addEventListener('scroll', () => {
   camera.position.set(0, 0, 12);
 
   /* ── Lights ── */
-  scene.add(new THREE.AmbientLight(0x1a0005, 2));
-  const keyLight = new THREE.PointLight(0xff2d55, 5, 35);
+  scene.add(new THREE.AmbientLight(0x00101a, 2));
+  const keyLight = new THREE.PointLight(0x00d4ff, 4, 35);
   keyLight.position.set(-3, 5, 6);
   scene.add(keyLight);
-  const goldLight = new THREE.PointLight(0xffd60a, 2.5, 28);
+  const goldLight = new THREE.PointLight(0x8b5cf6, 2, 28);
   goldLight.position.set(5, -3, 4);
   scene.add(goldLight);
-  const backLight = new THREE.PointLight(0xff6b6b, 1.5, 20);
+  const backLight = new THREE.PointLight(0x00ffcc, 1.2, 20);
   backLight.position.set(0, 2, -8);
   scene.add(backLight);
 
@@ -141,8 +141,8 @@ window.addEventListener('scroll', () => {
   const SPRING_K   = 0.022; // spring stiffness
   const DAMPING    = 0.87;  // velocity damping
   const REPEL_R    = 3.8;   // mouse repulsion radius
-  const REPEL_F    = 0.09;  // mouse repulsion force
-  const HOP_DELAY  = 0.26;  // seconds between cascade hops
+  const REPEL_F    = 0.055; // mouse repulsion force (gentler)
+  const HOP_DELAY  = 0.42;  // seconds between cascade hops (slower, calmer)
 
   /* ── Node data buffers ── */
   const basePos  = new Float32Array(NODE_COUNT * 3);
@@ -252,7 +252,7 @@ window.addEventListener('scroll', () => {
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPosArr, 3));
   const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
-    color: 0xffe0e0, size: 0.045, transparent: true, opacity: 0.45, sizeAttenuation: true
+    color: 0xd0f0ff, size: 0.038, transparent: true, opacity: 0.35, sizeAttenuation: true
   }));
   scene.add(stars);
 
@@ -263,12 +263,12 @@ window.addEventListener('scroll', () => {
 
   /* ── Node color helper ── */
   function nodeBaseColor(yVal) {
-    // Red (bottom) → Gold (top) gradient
+    // Teal #00ffcc (bottom) → Violet #8b5cf6 (top) — Aurora palette
     const t = Math.max(0, Math.min(1, (yVal + 5) / 10));
     return {
-      r: 1.0  * t + 1.0  * (1 - t),  // both full red channel
-      g: 0.84 * t + 0.17 * (1 - t),  // gold.g → red.g
-      b: 0.04 * t + 0.02 * (1 - t)
+      r: 0.545 * t + 0.0  * (1 - t),
+      g: 0.361 * t + 1.0  * (1 - t),
+      b: 0.965 * t + 0.8  * (1 - t)
     };
   }
 
@@ -279,10 +279,10 @@ window.addEventListener('scroll', () => {
       const e  = excite[i];
       const bc = nodeBaseColor(y);
 
-      // Blend toward bright white-gold when excited
-      const r = bc.r + (1.0  - bc.r) * e;
-      const g = bc.g + (0.98 - bc.g) * e;
-      const b = bc.b + (0.85 - bc.b) * e;
+      // Blend toward bright cyan-white when excited
+      const r = bc.r + (0.65 - bc.r) * e;
+      const g = bc.g + (1.0  - bc.g) * e;
+      const b = bc.b + (1.0  - bc.b) * e;
 
       nodeColBuf.setXYZ(i, r, g, b);
 
@@ -296,7 +296,7 @@ window.addEventListener('scroll', () => {
       dummy.scale.setScalar(nodeScl[i] * (1 + e * 5.0));
       dummy.updateMatrix();
       haloMesh.setMatrixAt(i, dummy.matrix);
-      haloColBuf.setXYZ(i, r * 0.7, g * 0.5, b * 0.2);
+      haloColBuf.setXYZ(i, r * 0.4, g * 0.55, b * 0.65);
     }
     nodeMesh.instanceMatrix.needsUpdate  = true;
     nodeMesh.instanceColor.needsUpdate   = true;
@@ -350,7 +350,7 @@ window.addEventListener('scroll', () => {
         nodeConns[idx].forEach(nb => {
           if (!f.visited.has(nb)) {
             f.visited.add(nb);
-            excite[nb] = Math.max(excite[nb], 0.88);
+            excite[nb] = Math.max(excite[nb], 0.65);
             next.push(nb);
           }
         });
@@ -428,9 +428,9 @@ window.addEventListener('scroll', () => {
       dummy.updateMatrix();
       pktMesh.setMatrixAt(pi, dummy.matrix);
 
-      // Color: red pulse → gold burst at peak
+      // Color: deep teal → bright cyan-white burst at peak
       const arc = Math.sin(p.t * Math.PI);
-      pktColBuf.setXYZ(pi, 1, 0.17 + arc * 0.67, arc * 0.1);
+      pktColBuf.setXYZ(pi, arc * 0.4, 0.75 + arc * 0.25, 0.85 + arc * 0.15);
     }
     pktMesh.instanceMatrix.needsUpdate = true;
     pktMesh.instanceColor.needsUpdate  = true;
@@ -464,19 +464,19 @@ window.addEventListener('scroll', () => {
     requestAnimationFrame(tick);
     const t = clock.getElapsedTime();
 
-    // Auto-trigger neuron fires
-    if (t - lastFireTime > 2.4 + Math.random() * 1.8) {
+    // Auto-trigger neuron fires — slower, calmer cadence
+    if (t - lastFireTime > 3.8 + Math.random() * 2.5) {
       triggerFire();
       lastFireTime = t;
-      // Occasional double-fire for dramatic cascades
-      if (Math.random() < 0.4) setTimeout(() => triggerFire(), 700 + Math.random() * 900);
+      // Rare second wave for gentle depth
+      if (Math.random() < 0.2) setTimeout(() => triggerFire(), 1200 + Math.random() * 1200);
     }
 
     // Process cascades
     processFirings(t);
 
-    // Decay excitement
-    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.952;
+    // Decay excitement — faster fade for cleaner, calmer look
+    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.938;
 
     // Smooth mouse for network rotation
     smoothMX += (rawMX - smoothMX) * 0.04;
@@ -507,8 +507,8 @@ window.addEventListener('scroll', () => {
     stars.rotation.y = t * 0.008;
     stars.rotation.x = t * 0.005;
 
-    // Pulsing key light intensity
-    keyLight.intensity = 4.5 + Math.sin(t * 0.9) * 0.8;
+    // Soft breathing key light
+    keyLight.intensity = 3.5 + Math.sin(t * 0.5) * 0.6;
 
     renderer.render(scene, camera);
   }
@@ -546,7 +546,7 @@ window.addEventListener('scroll', () => {
     r: 0.8 + Math.random() * 2.2,
     vx: (Math.random() - .5) * .0004, vy: (Math.random() - .5) * .0004,
     a: Math.random() * Math.PI * 2,
-    col: Math.random() > .45 ? '255,45,85' : '255,214,10'
+    col: Math.random() > .45 ? '0,212,255' : '139,92,246'
   }));
 
   (function draw() {

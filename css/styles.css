@@ -335,13 +335,13 @@ img { display: block; max-width: 100%; }
 .hero-glow--purple {
   width: 500px; height: 400px;
   left: 10%; top: 20%;
-  background: rgba(255,45,85,.12);
+  background: rgba(0,212,255,.07);
   animation: driftA 12s ease-in-out infinite alternate;
 }
 .hero-glow--gold {
   width: 400px; height: 320px;
   right: 10%; bottom: 20%;
-  background: rgba(255,214,10,.08);
+  background: rgba(139,92,246,.07);
   animation: driftB 15s ease-in-out infinite alternate;
 }
 @keyframes driftA { from { transform: translate(0,0); } to { transform: translate(60px,-40px); } }

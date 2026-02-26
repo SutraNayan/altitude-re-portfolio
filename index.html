@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nayan — ALTITUDE · Real Estate × AI in Metro Atlanta</title>
+  <meta name="description" content="Licensed Realtor at Keller Williams Realty. Fluent in 4 languages. Building AI tools that modernize Atlanta real estate." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-brand">
+      <span class="nav-brand__dot"></span>
+      <span>ALTITUDE<span class="nav-brand__accent">.re</span></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#languages">Languages</a></li>
+      <li><a href="#builds">What I Build</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#certs">Certifications</a></li>
+      <li><a href="#timeline">Journey</a></li>
+      <li><a href="#contact" class="nav-cta">Let's Connect</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <ul>
+    <li><a href="#about"     class="drawer-link">About</a></li>
+    <li><a href="#languages" class="drawer-link">Languages</a></li>
+    <li><a href="#builds"    class="drawer-link">What I Build</a></li>
+    <li><a href="#projects"  class="drawer-link">Projects</a></li>
+    <li><a href="#certs"     class="drawer-link">Certifications</a></li>
+    <li><a href="#timeline"  class="drawer-link">Journey</a></li>
+    <li><a href="#contact"   class="drawer-link">Contact</a></li>
+  </ul>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-glow hero-glow--purple"></div>
+  <div class="hero-glow hero-glow--gold"></div>
+
+  <div class="hero-content" id="heroContent">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Licensed Realtor &middot; Keller Williams Realty &middot; Metro Atlanta
+    </div>
+
+    <h1 class="hero-title">
+      <span class="hero-title__line1">Hi, I'm Nayan.</span>
+      <span class="hero-title__line2">
+        I <span class="typed-wrap"><span id="typed"></span><span class="cursor-blink">|</span></span>
+      </span>
+    </h1>
+
+    <p class="hero-desc">
+      Real estate agent. Physicist by training. Licensed drone pilot. Fluent in four languages.
+      Building AI tools that give Atlanta buyers and sellers an unfair advantage.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn--primary">See What I Build</a>
+      <a href="#about"    class="btn btn--outline">My Story</a>
+    </div>
+
+    <div class="hero-scroll">
+      <span>Scroll to explore</span>
+      <div class="scroll-track"><div class="scroll-thumb"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ABOUT
+══════════════════════════════════════════ -->
+<section class="section about-section" id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-visual reveal-left">
+        <div class="avatar-wrap">
+          <div class="avatar-ring"></div>
+          <div class="avatar-img">
+            <!-- Replace this SVG with your actual photo -->
+            <svg viewBox="0 0 120 120" fill="none">
+              <circle cx="60" cy="45" r="22" fill="url(#av1)" opacity=".9"/>
+              <ellipse cx="60" cy="105" rx="38" ry="22" fill="url(#av2)" opacity=".6"/>
+              <text x="60" y="52" text-anchor="middle" font-size="20" fill="rgba(255,255,255,.6)" font-family="Inter">N</text>
+              <defs>
+                <radialGradient id="av1" cx="40%" cy="35%">
+                  <stop offset="0%" stop-color="#ff2d55"/>
+                  <stop offset="100%" stop-color="#8c1a2e"/>
+                </radialGradient>
+                <radialGradient id="av2">
+                  <stop offset="0%" stop-color="#ffd60a" stop-opacity=".5"/>
+                  <stop offset="100%" stop-color="#ff2d55" stop-opacity=".2"/>
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="avatar-status">
+            <span class="status-dot"></span>
+            Active in Metro Atlanta
+          </div>
+        </div>
+        <div class="about-stats">
+          <div class="astat">
+            <span class="astat__n" data-target="4" data-suffix="">0</span>
+            <span class="astat__l">Languages</span>
+          </div>
+          <div class="astat">
+            <span class="astat__n" data-target="3" data-suffix="+">0</span>
+            <span class="astat__l">Atlanta Counties</span>
+          </div>
+          <div class="astat">
+            <span class="astat__n" data-target="5" data-suffix="">0</span>
+            <span class="astat__l">AI Certifications</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-copy reveal-right">
+        <span class="eyebrow">About Me</span>
+        <h2 class="section-title">Physics grad turned<br><span class="grad-text">Atlanta Realtor × AI Builder.</span></h2>
+
+        <p>My background is in physics — a field that trains you to see systems clearly, interpret data honestly, and question assumptions relentlessly. I brought that exact mindset into real estate.</p>
+
+        <p>I obtained my license in <em>September 2024</em> with Keller Williams Realty. But before I made a single cold call, I spent months doing what physicists do — building the infrastructure first. AI tools, market intelligence systems, multilingual outreach scripts, predictive pricing models. Then I stepped into execution.</p>
+
+        <p>I'm also a <em>licensed FAA drone pilot</em>, which means I bring aerial photography and videography to listings that most agents simply can't. It's a small detail that makes a large visual difference.</p>
+
+        <p>Atlanta's South Asian, Bengali, and Latino communities are underserved by agents who truly speak their language and understand their culture. I sit at that exact intersection — and I'm building the tools to serve them at scale.</p>
+
+        <div class="about-tags">
+          <span class="tag">🏠 Licensed Realtor</span>
+          <span class="tag">🤖 AI Builder</span>
+          <span class="tag">🚁 FAA Drone Pilot</span>
+          <span class="tag">🔬 Physics Background</span>
+          <span class="tag">🌎 4 Languages</span>
+          <span class="tag">📊 Data-Driven</span>
+          <span class="tag">🏙 Metro Atlanta</span>
+          <span class="tag">✍️ Prompt Engineer</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     LANGUAGES
+══════════════════════════════════════════ -->
+<section class="section lang-section" id="languages">
+  <div class="container">
+    <div class="section-head center reveal-up">
+      <span class="eyebrow">Languages &amp; Communities</span>
+      <h2 class="section-title">Four languages.<br><span class="grad-text">One agent who gets it.</span></h2>
+      <p class="section-sub">Language is more than words — it's trust. Atlanta's diversity deserves an agent who meets people where they are.</p>
+    </div>
+
+    <div class="lang-grid">
+
+      <div class="lang-card reveal-up" style="--delay:0s">
+        <div class="lang-flag">🇺🇸</div>
+        <h3>English</h3>
+        <p class="lang-level">Native / Primary</p>
+        <p>Full-spectrum Atlanta market — luxury listings, first-time buyers, investor portfolios, and everything in between.</p>
+        <div class="lang-markets">Fulton · Forsyth · DeKalb · Cherokee</div>
+      </div>
+
+      <div class="lang-card reveal-up" style="--delay:0.1s">
+        <div class="lang-flag">🇪🇸</div>
+        <h3>Spanish</h3>
+        <p class="lang-level">Fluent</p>
+        <p>Serving Gwinnett's vibrant Latino communities with full-service representation, no translator needed.</p>
+        <div class="lang-markets">Norcross · Duluth · Lawrenceville · Buford</div>
+      </div>
+
+      <div class="lang-card reveal-up" style="--delay:0.2s">
+        <div class="lang-flag">🇮🇳</div>
+        <h3>Hindi</h3>
+        <p class="lang-level">Fluent</p>
+        <p>North Atlanta's South Asian professional community deserves an agent who understands both the market and the culture.</p>
+        <div class="lang-markets">Alpharetta · Johns Creek · Sugar Hill</div>
+      </div>
+
+      <div class="lang-card lang-card--rare reveal-up" style="--delay:0.3s">
+        <div class="lang-card__rare-badge">Rare</div>
+        <div class="lang-flag">🇧🇩</div>
+        <h3>Bengali</h3>
+        <p class="lang-level">Fluent · Native Heritage</p>
+        <p>Possibly the only Realtor in Metro Atlanta who can guide Bengali-speaking families through the entire buying process in their mother tongue.</p>
+        <div class="lang-markets">Gwinnett · Cobb · North Atlanta</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     WHAT I BUILD
+══════════════════════════════════════════ -->
+<section class="section focus-section" id="builds">
+  <div class="container">
+    <div class="section-head center reveal-up">
+      <span class="eyebrow">What I Build</span>
+      <h2 class="section-title">Not just using AI tools.<br><span class="grad-text">Building them.</span></h2>
+    </div>
+
+    <div class="focus-grid">
+
+      <div class="focus-card reveal-up" style="--delay:0s">
+        <div class="focus-card__glow focus-card__glow--purple"></div>
+        <div class="focus-card__icon">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M8 48L20 32l10 8 10-16 16 24H8z" stroke="url(#fi1)" stroke-width="2" stroke-linejoin="round"/>
+            <circle cx="52" cy="14" r="6" stroke="url(#fi1)" stroke-width="2"/>
+            <path d="M12 16h16M12 24h10" stroke="url(#fi1)" stroke-width="2" stroke-linecap="round"/>
+            <defs><linearGradient id="fi1" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#ff2d55"/><stop offset="1" stop-color="#ffd60a"/></linearGradient></defs>
+          </svg>
+        </div>
+        <h3>AI Market Intelligence</h3>
+        <p>Building systems that turn raw MLS data into clear, actionable insights — predictive pricing models, neighborhood sentiment dashboards, and zip-code-level market reports generated automatically.</p>
+        <ul class="focus-list">
+          <li>Predictive pricing from Atlanta MLS data</li>
+          <li>Buyer/seller sentiment analysis by county</li>
+          <li>Automated market reports per zip code</li>
+          <li>Data-driven seller presentations</li>
+          <li>Lead scoring &amp; prospect prioritization</li>
+        </ul>
+        <div class="focus-card__footer">
+          <span class="pill pill--purple">Active</span>
+          <span class="focus-card__hrs">Daily practice</span>
+        </div>
+      </div>
+
+      <div class="focus-card reveal-up" style="--delay:0.15s">
+        <div class="focus-card__glow focus-card__glow--gold"></div>
+        <div class="focus-card__icon">
+          <svg viewBox="0 0 64 64" fill="none">
+            <rect x="10" y="10" width="44" height="32" rx="4" stroke="url(#fi2)" stroke-width="2"/>
+            <path d="M22 54h20M32 42v12" stroke="url(#fi2)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20 26h8M36 26h8M20 32h16" stroke="url(#fi2)" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="44" cy="12" r="5" fill="url(#fi2)" opacity=".8"/>
+            <defs><linearGradient id="fi2" x1="10" y1="10" x2="54" y2="54" gradientUnits="userSpaceOnUse"><stop stop-color="#ffd60a"/><stop offset="1" stop-color="#ff2d55"/></linearGradient></defs>
+          </svg>
+        </div>
+        <h3>Multilingual Outreach Systems</h3>
+        <p>Designing AI-powered outreach pipelines that scale across four languages — not translations, but culturally fluent campaigns that resonate with Atlanta's South Asian, Latino, and Bengali communities.</p>
+        <ul class="focus-list">
+          <li>AI-crafted scripts in English, Spanish, Hindi, Bengali</li>
+          <li>Culturally adapted messaging frameworks</li>
+          <li>Automated lead nurturing sequences</li>
+          <li>Personalized listing presentations by language</li>
+          <li>Community-specific market education content</li>
+        </ul>
+        <div class="focus-card__footer">
+          <span class="pill pill--gold">Active</span>
+          <span class="focus-card__hrs">Daily practice</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Market coverage -->
+    <div class="markets-row reveal-up" style="--delay:0.2s">
+      <p class="markets-label"><span class="eyebrow" style="margin:0">Markets Served</span></p>
+      <div class="markets-chips">
+        <span class="mchip">Gwinnett County</span>
+        <span class="mchip">Norcross</span>
+        <span class="mchip">Peachtree Corners</span>
+        <span class="mchip">Duluth</span>
+        <span class="mchip mchip--div">·</span>
+        <span class="mchip">Cobb County</span>
+        <span class="mchip">Marietta</span>
+        <span class="mchip">Smyrna</span>
+        <span class="mchip">Kennesaw</span>
+        <span class="mchip">East Cobb</span>
+        <span class="mchip mchip--div">·</span>
+        <span class="mchip mchip--gold">Roswell</span>
+        <span class="mchip mchip--gold">Alpharetta</span>
+        <span class="mchip mchip--gold">Milton</span>
+        <span class="mchip mchip--gold mchip--label">Luxury</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     PROJECTS
+══════════════════════════════════════════ -->
+<section class="section projects-section" id="projects">
+  <div class="container">
+    <div class="section-head reveal-up">
+      <span class="eyebrow">Projects</span>
+      <h2 class="section-title">Real tools.<br><span class="grad-text">Built for real estate.</span></h2>
+      <p class="section-sub">Each project solves a real problem in how Atlanta real estate gets bought, sold, and communicated.</p>
+    </div>
+
+    <div class="projects-grid">
+
+      <div class="proj-card proj-card--featured reveal-up" style="--delay:0s">
+        <div class="proj-card__glow"></div>
+        <div class="proj-card__top">
+          <div class="proj-icon">📰</div>
+          <div class="proj-links">
+            <a href="#" class="proj-link" aria-label="View">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3>Keys &amp; Chaos Newsletter</h3>
+        <p>AI-powered Atlanta real estate market intelligence newsletter covering buyer/seller sentiment across Fulton, Cobb, Gwinnett, Forsyth, and DeKalb counties. Turns MLS noise into clear weekly insight.</p>
+        <div class="proj-tags">
+          <span class="ptag">AI Writing</span>
+          <span class="ptag">Market Intelligence</span>
+          <span class="ptag">Atlanta MLS</span>
+          <span class="ptag">5 Counties</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal-up" style="--delay:0.1s">
+        <div class="proj-card__top">
+          <div class="proj-icon">📱</div>
+          <div class="proj-links">
+            <a href="#" class="proj-link" aria-label="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a>
+          </div>
+        </div>
+        <h3>Command HQ</h3>
+        <p>Mobile-first prospecting app concept with real-time KPI tracking, multilingual outreach scripts, and a daily action dashboard — built for the modern agent on the move.</p>
+        <div class="proj-tags">
+          <span class="ptag">App Design</span>
+          <span class="ptag">KPI Tracking</span>
+          <span class="ptag">4 Languages</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal-up" style="--delay:0.2s">
+        <div class="proj-card__top">
+          <div class="proj-icon">📊</div>
+          <div class="proj-links">
+            <a href="#" class="proj-link" aria-label="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a>
+          </div>
+        </div>
+        <h3>Seller Presentation System</h3>
+        <p>AI-enhanced listing presentations with predictive market analysis — CMA reports that don't just show comps, but tell a clear pricing story backed by data.</p>
+        <div class="proj-tags">
+          <span class="ptag">Prompt Engineering</span>
+          <span class="ptag">CMA Analysis</span>
+          <span class="ptag">Predictive Pricing</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal-up" style="--delay:0.3s">
+        <div class="proj-card__top">
+          <div class="proj-icon">🌐</div>
+          <div class="proj-links">
+            <a href="#" class="proj-link" aria-label="View"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg></a>
+          </div>
+        </div>
+        <h3>Multilingual Outreach Engine</h3>
+        <p>A library of culturally fluent outreach scripts across English, Spanish, Hindi, and Bengali — AI-generated, human-refined, ready for genuine connection at scale.</p>
+        <div class="proj-tags">
+          <span class="ptag">Spanish</span>
+          <span class="ptag">Hindi</span>
+          <span class="ptag">Bengali</span>
+          <span class="ptag">AI Scripting</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CERTIFICATIONS
+══════════════════════════════════════════ -->
+<section class="section certs-section" id="certs">
+  <div class="container">
+    <div class="section-head center reveal-up">
+      <span class="eyebrow">Certifications &amp; Credentials</span>
+      <h2 class="section-title">The receipts.<br><span class="grad-text">Earned, not claimed.</span></h2>
+    </div>
+
+    <div class="certs-grid">
+
+      <div class="cert-card reveal-up" style="--delay:0s">
+        <div class="cert-logo cert-logo--google">G</div>
+        <div class="cert-body">
+          <h4>Google AI Essentials</h4>
+          <p>Google · 2024</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Complete</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.07s">
+        <div class="cert-logo cert-logo--google">G</div>
+        <div class="cert-body">
+          <h4>Google AI Professional Certificate</h4>
+          <p>Google · 2024</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Complete</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.14s">
+        <div class="cert-logo cert-logo--vandy">V</div>
+        <div class="cert-body">
+          <h4>Prompt Engineering for ChatGPT</h4>
+          <p>Vanderbilt University · 2024</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Complete</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.21s">
+        <div class="cert-logo cert-logo--gen">AI</div>
+        <div class="cert-body">
+          <h4>Generative AI for Growth Marketing</h4>
+          <p>Industry Certification · 2024</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Complete</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.28s">
+        <div class="cert-logo cert-logo--py">Py</div>
+        <div class="cert-body">
+          <h4>Python &amp; Data Intelligence</h4>
+          <p>In progress · 2025</p>
+        </div>
+        <div class="cert-badge cert-badge--active">⚡ In Progress</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.35s">
+        <div class="cert-logo cert-logo--kw">KW</div>
+        <div class="cert-body">
+          <h4>Licensed Real Estate Agent</h4>
+          <p>Georgia · September 2024</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Licensed</div>
+      </div>
+
+      <div class="cert-card reveal-up" style="--delay:0.42s">
+        <div class="cert-logo cert-logo--faa">FAA</div>
+        <div class="cert-body">
+          <h4>Part 107 Drone Pilot</h4>
+          <p>FAA Certified · Commercial Use</p>
+        </div>
+        <div class="cert-badge cert-badge--done">✓ Certified</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TIMELINE
+══════════════════════════════════════════ -->
+<section class="section timeline-section" id="timeline">
+  <div class="container">
+    <div class="section-head center reveal-up">
+      <span class="eyebrow">The Journey</span>
+      <h2 class="section-title">How it started.<br><span class="grad-text">Where it's going.</span></h2>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item reveal-up" style="--delay:0s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-date">The Foundation</span>
+          <h3>Physics background &amp; analytical roots</h3>
+          <p>Studying physics trained me to look past surface data, model systems, and think in first principles. That instinct never left.</p>
+          <span class="tl-tag">🔬 Foundation</span>
+        </div>
+      </div>
+
+      <div class="tl-item tl-item--right reveal-up" style="--delay:0.1s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-date">The Realization</span>
+          <h3>Saw what AI could do to real estate</h3>
+          <p>The industry was running on gut instinct and outdated marketing. I saw clearly that AI wasn't a detour from real estate — it was the plan.</p>
+          <span class="tl-tag">💡 The Pivot</span>
+        </div>
+      </div>
+
+      <div class="tl-item reveal-up" style="--delay:0.2s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-date">September 2024</span>
+          <h3>Licensed with Keller Williams Realty</h3>
+          <p>Obtained my Georgia real estate license. Joined Keller Williams Realty — but before the first cold call, I built the infrastructure.</p>
+          <span class="tl-tag">🏠 Licensed</span>
+        </div>
+      </div>
+
+      <div class="tl-item tl-item--right reveal-up" style="--delay:0.3s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-date">Late 2024</span>
+          <h3>Built the AI-powered infrastructure</h3>
+          <p>Months of deep work — certifications, tools, systems, multilingual scripts, market intelligence pipelines — before stepping fully into execution.</p>
+          <span class="tl-tag">⚙️ Building</span>
+        </div>
+      </div>
+
+      <div class="tl-item reveal-up" style="--delay:0.4s">
+        <div class="tl-dot"></div>
+        <div class="tl-card">
+          <span class="tl-date">Early 2025</span>
+          <h3>Launched Keys &amp; Chaos Newsletter</h3>
+          <p>Went live with Atlanta's only AI-powered real estate market intelligence newsletter. Five counties. Weekly insights. No fluff.</p>
+          <span class="tl-tag">📰 Live</span>
+        </div>
+      </div>
+
+      <div class="tl-item tl-item--right tl-item--active reveal-up" style="--delay:0.5s">
+        <div class="tl-dot tl-dot--active"></div>
+        <div class="tl-card tl-card--active">
+          <span class="tl-date">Now — 2025</span>
+          <h3>Going deeper: Python &amp; data intelligence</h3>
+          <p>Learning to build from scratch — predictive models, MLS data pipelines, neighborhood dashboards. Not dependent on off-the-shelf tools. Building my own.</p>
+          <span class="tl-tag tl-tag--active">📍 Right now</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CURRENTLY LEARNING
+══════════════════════════════════════════ -->
+<section class="section current-section">
+  <div class="container">
+    <div class="current-grid">
+      <div class="current-copy reveal-left">
+        <span class="eyebrow">Currently</span>
+        <h2 class="section-title">What's on<br><span class="grad-text">my desk right now.</span></h2>
+        <p style="color:var(--text2);margin-top:1rem;line-height:1.75;font-size:.95rem;">Going a layer deeper than the tools — learning the code, the data, and the math behind them.</p>
+      </div>
+      <div class="current-cards reveal-right">
+        <div class="curr-card">
+          <span class="curr-icon">📖</span>
+          <div>
+            <h4>Studying</h4>
+            <p>Python fundamentals and pandas — building toward custom Atlanta MLS data analysis</p>
+          </div>
+        </div>
+        <div class="curr-card">
+          <span class="curr-icon">🔨</span>
+          <div>
+            <h4>Building</h4>
+            <p>A predictive pricing model trained on Gwinnett and Cobb County sales data</p>
+          </div>
+        </div>
+        <div class="curr-card">
+          <span class="curr-icon">🎓</span>
+          <div>
+            <h4>Completing</h4>
+            <p>Data Intelligence certification — focused on real estate data pipelines and dashboards</p>
+          </div>
+        </div>
+        <div class="curr-card">
+          <span class="curr-icon">🚁</span>
+          <div>
+            <h4>Using</h4>
+            <p>Drone footage combined with AI-written listing copy for elevated property marketing</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CONTACT
+══════════════════════════════════════════ -->
+<section class="section contact-section" id="contact">
+  <canvas id="contactCanvas"></canvas>
+  <div class="contact-glow contact-glow--1"></div>
+  <div class="contact-glow contact-glow--2"></div>
+  <div class="container">
+    <div class="contact-inner reveal-up">
+      <span class="eyebrow">Get in Touch</span>
+      <h2 class="contact-title">Buying, selling,<br><span class="grad-text">or just curious?</span></h2>
+      <p class="contact-sub">If you're looking to buy or sell in Metro Atlanta — or want to connect with an agent who brings AI intelligence, multilingual reach, and aerial marketing to every transaction — let's talk.</p>
+      <div class="contact-actions">
+        <a href="mailto:nayan@kwpeachtreeroad.com" class="btn btn--primary btn--large">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Say Hello
+        </a>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Twitter/X">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <a href="#hero" class="footer-brand">
+        <span class="nav-brand__dot"></span>ALTITUDE<span class="nav-brand__accent">.re</span>
+      </a>
+      <p>Licensed Realtor · Keller Williams Realty · Metro Atlanta · GA License #&#8203;2024</p>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <p>© 2025 Nayan. Keller Williams Realty. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

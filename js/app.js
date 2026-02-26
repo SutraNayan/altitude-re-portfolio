@@ -124,14 +124,14 @@ window.addEventListener('scroll', () => {
   camera.position.set(0, 0, 12);
 
   /* ── Lights ── */
-  scene.add(new THREE.AmbientLight(0x00101a, 2));
-  const keyLight = new THREE.PointLight(0x00d4ff, 4, 35);
+  scene.add(new THREE.AmbientLight(0x1a0005, 2));
+  const keyLight = new THREE.PointLight(0xff2d55, 5, 35);
   keyLight.position.set(-3, 5, 6);
   scene.add(keyLight);
-  const goldLight = new THREE.PointLight(0x8b5cf6, 2, 28);
+  const goldLight = new THREE.PointLight(0xffd60a, 2.5, 28);
   goldLight.position.set(5, -3, 4);
   scene.add(goldLight);
-  const backLight = new THREE.PointLight(0x00ffcc, 1.2, 20);
+  const backLight = new THREE.PointLight(0xff6b6b, 1.5, 20);
   backLight.position.set(0, 2, -8);
   scene.add(backLight);
 
@@ -141,7 +141,8 @@ window.addEventListener('scroll', () => {
   const SPRING_K   = 0.022; // spring stiffness
   const DAMPING    = 0.87;  // velocity damping
   const REPEL_R    = 3.8;   // mouse repulsion radius
-  const REPEL_F    = 0.055; // mouse repulsion force (gentler)
+  const REPEL_F    = 0.09;  // mouse repulsion force
+  const HOP_DELAY  = 0.26;  // seconds between cascade hops
 
   /* ── Node data buffers ── */
   const basePos  = new Float32Array(NODE_COUNT * 3);
@@ -220,7 +221,7 @@ window.addEventListener('scroll', () => {
   const lines = new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({
     vertexColors: true,
     transparent: true,
-    opacity: 0.26,
+    opacity: 0.2,
     blending: THREE.AdditiveBlending,
     depthWrite: false
   }));
@@ -251,7 +252,7 @@ window.addEventListener('scroll', () => {
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPosArr, 3));
   const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
-    color: 0xd0f0ff, size: 0.038, transparent: true, opacity: 0.35, sizeAttenuation: true
+    color: 0xffe0e0, size: 0.045, transparent: true, opacity: 0.45, sizeAttenuation: true
   }));
   scene.add(stars);
 
@@ -262,12 +263,12 @@ window.addEventListener('scroll', () => {
 
   /* ── Node color helper ── */
   function nodeBaseColor(yVal) {
-    // Teal #00ffcc (bottom) → Violet #8b5cf6 (top) — Aurora palette
+    // Red (bottom) → Gold (top) gradient
     const t = Math.max(0, Math.min(1, (yVal + 5) / 10));
     return {
-      r: 0.545 * t + 0.0  * (1 - t),
-      g: 0.361 * t + 1.0  * (1 - t),
-      b: 0.965 * t + 0.8  * (1 - t)
+      r: 1.0,
+      g: 0.84 * t + 0.17 * (1 - t),
+      b: 0.04 * t + 0.02 * (1 - t)
     };
   }
 
@@ -278,10 +279,10 @@ window.addEventListener('scroll', () => {
       const e  = excite[i];
       const bc = nodeBaseColor(y);
 
-      // Blend toward bright cyan-white when excited
-      const r = bc.r + (0.65 - bc.r) * e;
-      const g = bc.g + (1.0  - bc.g) * e;
-      const b = bc.b + (1.0  - bc.b) * e;
+      // Blend toward bright white-gold when excited
+      const r = bc.r + (1.0  - bc.r) * e;
+      const g = bc.g + (0.98 - bc.g) * e;
+      const b = bc.b + (0.85 - bc.b) * e;
 
       nodeColBuf.setXYZ(i, r, g, b);
 
@@ -295,7 +296,7 @@ window.addEventListener('scroll', () => {
       dummy.scale.setScalar(nodeScl[i] * (1 + e * 5.0));
       dummy.updateMatrix();
       haloMesh.setMatrixAt(i, dummy.matrix);
-      haloColBuf.setXYZ(i, r * 0.4, g * 0.55, b * 0.65);
+      haloColBuf.setXYZ(i, r * 0.7, g * 0.5, b * 0.2);
     }
     nodeMesh.instanceMatrix.needsUpdate  = true;
     nodeMesh.instanceColor.needsUpdate   = true;
@@ -322,45 +323,41 @@ window.addEventListener('scroll', () => {
   }
 
   /* ═══════════════════════════
-     SONAR PULSE WAVE
-     A node fires → a 3D shockwave ring expands outward.
-     Every node the ring passes through lights up, then fades.
-     Multiple waves can coexist, creating interference patterns.
+     NEURON CASCADE FIRING
   ═══════════════════════════ */
-  const waves = [];
-  let lastWaveTime  = -99;
-  const WAVE_SPEED  = 3.4;  // units per second
-  const WAVE_WIDTH  = 1.35; // ring thickness
-  const WAVE_STR    = 0.92; // peak excitement at ring center
+  const firings = [];
+  let lastFireTime = -99;
 
-  function triggerWave() {
-    const idx = Math.floor(Math.random() * NODE_COUNT);
-    excite[idx] = 1.0; // origin flashes bright
-    waves.push({
-      ox: curPos[idx * 3],
-      oy: curPos[idx * 3 + 1],
-      oz: curPos[idx * 3 + 2],
-      radius: 0
+  function triggerFire(startIdx) {
+    const idx = (startIdx !== undefined) ? startIdx : Math.floor(Math.random() * NODE_COUNT);
+    excite[idx] = 1.0;
+    firings.push({
+      visited:     new Set([idx]),
+      frontier:    [idx],
+      lastHopTime: clock.getElapsedTime(),
+      hopCount:    0,
+      maxHops:     8 + Math.floor(Math.random() * 6)
     });
   }
 
-  function processWaves(dt) {
-    for (let wi = waves.length - 1; wi >= 0; wi--) {
-      const w = waves[wi];
-      w.radius += WAVE_SPEED * dt;
-      if (w.radius > 16) { waves.splice(wi, 1); continue; }
-
-      for (let i = 0; i < NODE_COUNT; i++) {
-        const dx   = curPos[i*3]   - w.ox;
-        const dy   = curPos[i*3+1] - w.oy;
-        const dz   = curPos[i*3+2] - w.oz;
-        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-        const delta = Math.abs(dist - w.radius);
-        if (delta < WAVE_WIDTH) {
-          const str = (1 - delta / WAVE_WIDTH) * WAVE_STR;
-          excite[i] = Math.max(excite[i], str);
-        }
-      }
+  function processFirings(t) {
+    for (let fi = firings.length - 1; fi >= 0; fi--) {
+      const f = firings[fi];
+      if (t - f.lastHopTime < HOP_DELAY) continue;
+      const next = [];
+      f.frontier.forEach(idx => {
+        nodeConns[idx].forEach(nb => {
+          if (!f.visited.has(nb)) {
+            f.visited.add(nb);
+            excite[nb] = Math.max(excite[nb], 0.88);
+            next.push(nb);
+          }
+        });
+      });
+      f.frontier    = next;
+      f.lastHopTime = t;
+      f.hopCount++;
+      if (next.length === 0 || f.hopCount >= f.maxHops) firings.splice(fi, 1);
     }
   }
 
@@ -457,26 +454,23 @@ window.addEventListener('scroll', () => {
      MAIN ANIMATION LOOP
   ════════════════════════════ */
   const clock = new THREE.Clock();
-  let prevT = 0;
 
   function tick() {
     requestAnimationFrame(tick);
-    const t  = clock.getElapsedTime();
-    const dt = Math.min(t - prevT, 0.05); // cap to avoid spiral on tab switch
-    prevT = t;
+    const t = clock.getElapsedTime();
 
-    // Fire a sonar pulse every 3.5–5.5s, occasionally two close together
-    if (t - lastWaveTime > 3.5 + Math.random() * 2.0) {
-      triggerWave();
-      lastWaveTime = t;
-      if (Math.random() < 0.35) setTimeout(() => triggerWave(), 600 + Math.random() * 800);
+    // Auto-trigger neuron fires
+    if (t - lastFireTime > 2.4 + Math.random() * 1.8) {
+      triggerFire();
+      lastFireTime = t;
+      if (Math.random() < 0.4) setTimeout(() => triggerFire(), 700 + Math.random() * 900);
     }
 
-    // Expand waves + light up nodes in their path
-    processWaves(dt);
+    // Process cascades
+    processFirings(t);
 
     // Decay excitement
-    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.938;
+    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.952;
 
     // Smooth mouse for network rotation
     smoothMX += (rawMX - smoothMX) * 0.04;
@@ -508,7 +502,7 @@ window.addEventListener('scroll', () => {
     stars.rotation.x = t * 0.005;
 
     // Soft breathing key light
-    keyLight.intensity = 3.5 + Math.sin(t * 0.5) * 0.6;
+    keyLight.intensity = 4.5 + Math.sin(t * 0.9) * 0.8;
 
     renderer.render(scene, camera);
   }
@@ -546,7 +540,7 @@ window.addEventListener('scroll', () => {
     r: 0.8 + Math.random() * 2.2,
     vx: (Math.random() - .5) * .0004, vy: (Math.random() - .5) * .0004,
     a: Math.random() * Math.PI * 2,
-    col: Math.random() > .45 ? '0,212,255' : '139,92,246'
+    col: Math.random() > .45 ? '255,45,85' : '255,214,10'
   }));
 
   (function draw() {

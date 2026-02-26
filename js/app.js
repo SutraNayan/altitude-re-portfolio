@@ -138,11 +138,11 @@ window.addEventListener('scroll', () => {
   /* ── Simulation constants ── */
   const NODE_COUNT = 62;
   const MAX_DIST   = 3.1;   // max connection distance
-  const SPRING_K   = 0.022; // spring stiffness
-  const DAMPING    = 0.87;  // velocity damping
+  const SPRING_K   = 0.010; // spring stiffness
+  const DAMPING    = 0.93;  // velocity damping
   const REPEL_R    = 3.8;   // mouse repulsion radius
-  const REPEL_F    = 0.09;  // mouse repulsion force
-  const HOP_DELAY  = 0.26;  // seconds between cascade hops
+  const REPEL_F    = 0.05;  // mouse repulsion force
+  const HOP_DELAY  = 0.36;  // seconds between cascade hops
 
   /* ── Node data buffers ── */
   const basePos  = new Float32Array(NODE_COUNT * 3);
@@ -401,7 +401,7 @@ window.addEventListener('scroll', () => {
       from: [curPos[cp.i*3], curPos[cp.i*3+1], curPos[cp.i*3+2]],
       to:   [curPos[cp.j*3], curPos[cp.j*3+1], curPos[cp.j*3+2]],
       t: 0,
-      speed: 0.008 + Math.random() * 0.013
+      speed: 0.004 + Math.random() * 0.007
     });
     lastPktTime = t;
   }
@@ -460,21 +460,21 @@ window.addEventListener('scroll', () => {
     const t = clock.getElapsedTime();
 
     // Auto-trigger neuron fires
-    if (t - lastFireTime > 2.4 + Math.random() * 1.8) {
+    if (t - lastFireTime > 3.8 + Math.random() * 2.5) {
       triggerFire();
       lastFireTime = t;
-      if (Math.random() < 0.4) setTimeout(() => triggerFire(), 700 + Math.random() * 900);
+      if (Math.random() < 0.4) setTimeout(() => triggerFire(), 1400 + Math.random() * 1400);
     }
 
     // Process cascades
     processFirings(t);
 
     // Decay excitement
-    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.952;
+    for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.968;
 
     // Smooth mouse for network rotation
-    smoothMX += (rawMX - smoothMX) * 0.04;
-    smoothMY += (rawMY - smoothMY) * 0.04;
+    smoothMX += (rawMX - smoothMX) * 0.022;
+    smoothMY += (rawMY - smoothMY) * 0.022;
 
     // Physics (with mouse repulsion)
     physicsStep(netMX, netMY);
@@ -488,13 +488,13 @@ window.addEventListener('scroll', () => {
     updatePackets();
 
     // Network transform
-    netGroup.rotation.y = t * 0.038 + smoothMX;
-    netGroup.rotation.x = smoothMY * 0.5;
+    netGroup.rotation.y = t * 0.018 + smoothMX;
+    netGroup.rotation.x = smoothMY * 0.4;
     netGroup.scale.setScalar(scrollScale);
 
     // Camera gentle drift (breathes slowly)
-    camera.position.x = Math.sin(t * 0.07) * 0.5;
-    camera.position.y = Math.cos(t * 0.05) * 0.3;
+    camera.position.x = Math.sin(t * 0.035) * 0.3;
+    camera.position.y = Math.cos(t * 0.025) * 0.18;
     camera.lookAt(0, 0, 0);
 
     // Stars slow counter-rotate

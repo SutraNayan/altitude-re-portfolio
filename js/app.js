@@ -142,7 +142,6 @@ window.addEventListener('scroll', () => {
   const DAMPING    = 0.87;  // velocity damping
   const REPEL_R    = 3.8;   // mouse repulsion radius
   const REPEL_F    = 0.055; // mouse repulsion force (gentler)
-  const HOP_DELAY  = 0.42;  // seconds between cascade hops (slower, calmer)
 
   /* ── Node data buffers ── */
   const basePos  = new Float32Array(NODE_COUNT * 3);
@@ -221,7 +220,7 @@ window.addEventListener('scroll', () => {
   const lines = new THREE.LineSegments(lineGeo, new THREE.LineBasicMaterial({
     vertexColors: true,
     transparent: true,
-    opacity: 0.2,
+    opacity: 0.26,
     blending: THREE.AdditiveBlending,
     depthWrite: false
   }));
@@ -323,46 +322,46 @@ window.addEventListener('scroll', () => {
   }
 
   /* ═══════════════════════════
-     NEURON CASCADE FIRING
+     CONSTELLATION DRIFT
+     One node glows → neighbor stars drawn one by one,
+     like a constellation being traced in the sky, then fading.
   ═══════════════════════════ */
-  const firings = [];
-  let lastFireTime = -99;
+  const constellations = [];
+  let lastConstellTime = -99;
 
-  function triggerFire(startIdx) {
-    const idx = (startIdx !== undefined) ? startIdx : Math.floor(Math.random() * NODE_COUNT);
-    excite[idx] = 1.0;
-    firings.push({
-      visited:      new Set([idx]),
-      frontier:     [idx],
-      lastHopTime:  clock.getElapsedTime(),
-      hopCount:     0,
-      maxHops:      8 + Math.floor(Math.random() * 6)
+  function triggerConstellation() {
+    const origin = Math.floor(Math.random() * NODE_COUNT);
+    const allNeighbors = nodeConns[origin].slice();
+
+    // Shuffle so stars are drawn in random order
+    for (let i = allNeighbors.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allNeighbors[i], allNeighbors[j]] = [allNeighbors[j], allNeighbors[i]];
+    }
+
+    // Draw 2–5 connecting stars
+    const count = 2 + Math.floor(Math.random() * Math.min(4, allNeighbors.length));
+
+    excite[origin] = 0.82;  // origin star glows first
+    constellations.push({
+      origin,
+      stars:        allNeighbors.slice(0, count),
+      nextStar:     0,
+      lastDrawTime: clock.getElapsedTime(),
+      drawInterval: 0.45 + Math.random() * 0.35  // ~0.45–0.8s between each star
     });
   }
 
-  function processFirings(t) {
-    for (let fi = firings.length - 1; fi >= 0; fi--) {
-      const f = firings[fi];
-      if (t - f.lastHopTime < HOP_DELAY) continue;
-
-      const next = [];
-      f.frontier.forEach(idx => {
-        nodeConns[idx].forEach(nb => {
-          if (!f.visited.has(nb)) {
-            f.visited.add(nb);
-            excite[nb] = Math.max(excite[nb], 0.65);
-            next.push(nb);
-          }
-        });
-      });
-
-      f.frontier     = next;
-      f.lastHopTime  = t;
-      f.hopCount++;
-
-      if (next.length === 0 || f.hopCount >= f.maxHops) {
-        firings.splice(fi, 1);
+  function processConstellations(t) {
+    for (let ci = constellations.length - 1; ci >= 0; ci--) {
+      const c = constellations[ci];
+      if (c.nextStar < c.stars.length && t - c.lastDrawTime > c.drawInterval) {
+        // Light up next star in the constellation
+        excite[c.stars[c.nextStar]] = Math.max(excite[c.stars[c.nextStar]], 0.55);
+        c.nextStar++;
+        c.lastDrawTime = t;
       }
+      if (c.nextStar >= c.stars.length) constellations.splice(ci, 1);
     }
   }
 
@@ -464,16 +463,15 @@ window.addEventListener('scroll', () => {
     requestAnimationFrame(tick);
     const t = clock.getElapsedTime();
 
-    // Auto-trigger neuron fires — slower, calmer cadence
-    if (t - lastFireTime > 3.8 + Math.random() * 2.5) {
-      triggerFire();
-      lastFireTime = t;
-      // Rare second wave for gentle depth
-      if (Math.random() < 0.2) setTimeout(() => triggerFire(), 1200 + Math.random() * 1200);
+    // Trigger constellation drift — one every 3–5s, occasionally two in sequence
+    if (t - lastConstellTime > 3.2 + Math.random() * 1.8) {
+      triggerConstellation();
+      lastConstellTime = t;
+      if (Math.random() < 0.3) setTimeout(() => triggerConstellation(), 900 + Math.random() * 900);
     }
 
-    // Process cascades
-    processFirings(t);
+    // Draw constellations
+    processConstellations(t);
 
     // Decay excitement — faster fade for cleaner, calmer look
     for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.938;

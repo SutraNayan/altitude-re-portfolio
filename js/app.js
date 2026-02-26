@@ -322,46 +322,45 @@ window.addEventListener('scroll', () => {
   }
 
   /* ═══════════════════════════
-     CONSTELLATION DRIFT
-     One node glows → neighbor stars drawn one by one,
-     like a constellation being traced in the sky, then fading.
+     SONAR PULSE WAVE
+     A node fires → a 3D shockwave ring expands outward.
+     Every node the ring passes through lights up, then fades.
+     Multiple waves can coexist, creating interference patterns.
   ═══════════════════════════ */
-  const constellations = [];
-  let lastConstellTime = -99;
+  const waves = [];
+  let lastWaveTime  = -99;
+  const WAVE_SPEED  = 3.4;  // units per second
+  const WAVE_WIDTH  = 1.35; // ring thickness
+  const WAVE_STR    = 0.92; // peak excitement at ring center
 
-  function triggerConstellation() {
-    const origin = Math.floor(Math.random() * NODE_COUNT);
-    const allNeighbors = nodeConns[origin].slice();
-
-    // Shuffle so stars are drawn in random order
-    for (let i = allNeighbors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [allNeighbors[i], allNeighbors[j]] = [allNeighbors[j], allNeighbors[i]];
-    }
-
-    // Draw 2–5 connecting stars
-    const count = 2 + Math.floor(Math.random() * Math.min(4, allNeighbors.length));
-
-    excite[origin] = 0.82;  // origin star glows first
-    constellations.push({
-      origin,
-      stars:        allNeighbors.slice(0, count),
-      nextStar:     0,
-      lastDrawTime: clock.getElapsedTime(),
-      drawInterval: 0.45 + Math.random() * 0.35  // ~0.45–0.8s between each star
+  function triggerWave() {
+    const idx = Math.floor(Math.random() * NODE_COUNT);
+    excite[idx] = 1.0; // origin flashes bright
+    waves.push({
+      ox: curPos[idx * 3],
+      oy: curPos[idx * 3 + 1],
+      oz: curPos[idx * 3 + 2],
+      radius: 0
     });
   }
 
-  function processConstellations(t) {
-    for (let ci = constellations.length - 1; ci >= 0; ci--) {
-      const c = constellations[ci];
-      if (c.nextStar < c.stars.length && t - c.lastDrawTime > c.drawInterval) {
-        // Light up next star in the constellation
-        excite[c.stars[c.nextStar]] = Math.max(excite[c.stars[c.nextStar]], 0.55);
-        c.nextStar++;
-        c.lastDrawTime = t;
+  function processWaves(dt) {
+    for (let wi = waves.length - 1; wi >= 0; wi--) {
+      const w = waves[wi];
+      w.radius += WAVE_SPEED * dt;
+      if (w.radius > 16) { waves.splice(wi, 1); continue; }
+
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const dx   = curPos[i*3]   - w.ox;
+        const dy   = curPos[i*3+1] - w.oy;
+        const dz   = curPos[i*3+2] - w.oz;
+        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        const delta = Math.abs(dist - w.radius);
+        if (delta < WAVE_WIDTH) {
+          const str = (1 - delta / WAVE_WIDTH) * WAVE_STR;
+          excite[i] = Math.max(excite[i], str);
+        }
       }
-      if (c.nextStar >= c.stars.length) constellations.splice(ci, 1);
     }
   }
 
@@ -458,22 +457,25 @@ window.addEventListener('scroll', () => {
      MAIN ANIMATION LOOP
   ════════════════════════════ */
   const clock = new THREE.Clock();
+  let prevT = 0;
 
   function tick() {
     requestAnimationFrame(tick);
-    const t = clock.getElapsedTime();
+    const t  = clock.getElapsedTime();
+    const dt = Math.min(t - prevT, 0.05); // cap to avoid spiral on tab switch
+    prevT = t;
 
-    // Trigger constellation drift — one every 3–5s, occasionally two in sequence
-    if (t - lastConstellTime > 3.2 + Math.random() * 1.8) {
-      triggerConstellation();
-      lastConstellTime = t;
-      if (Math.random() < 0.3) setTimeout(() => triggerConstellation(), 900 + Math.random() * 900);
+    // Fire a sonar pulse every 3.5–5.5s, occasionally two close together
+    if (t - lastWaveTime > 3.5 + Math.random() * 2.0) {
+      triggerWave();
+      lastWaveTime = t;
+      if (Math.random() < 0.35) setTimeout(() => triggerWave(), 600 + Math.random() * 800);
     }
 
-    // Draw constellations
-    processConstellations(t);
+    // Expand waves + light up nodes in their path
+    processWaves(dt);
 
-    // Decay excitement — faster fade for cleaner, calmer look
+    // Decay excitement
     for (let i = 0; i < NODE_COUNT; i++) excite[i] *= 0.938;
 
     // Smooth mouse for network rotation
